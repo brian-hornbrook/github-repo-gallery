@@ -237,11 +237,12 @@ section.repo-data {
     }
 
     .repo-list {
-        justify-content: space-between;
+        /* justify-content: space-between; */
     }
 
     .repo-list li {
         width: 48%;
+        margin: 16px 15px;
     }
 }
 

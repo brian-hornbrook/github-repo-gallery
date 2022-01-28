@@ -19,34 +19,46 @@ profile();
 const displayProfile = function (user) {
     const userProfile = document.createElement("div");
     userProfile.classList.add("user-info");
-    userProfile.innerHTML =
-        `<figure>
-            <img src="${user.avatar_url}" alt="user avatar">
-        </figure>
-        <div>
-            <p><strong>Name:</strong> ${user.name}</p>
-            <p><strong>Bio:</strong> ${user.bio}</p>
-            <p><strong>Location:</strong> ${user.location}</p>
-            <p><strong>Number of public repos:</strong> ${user.public_repos}</p>
-        </div>`;
+    if (user.message === "Not Found") {
+        userProfile.innerHTML = "<p>Couldn't find GitHub $GitHub</p>"
+    } else {
+        userProfile.innerHTML =
+            `<figure>
+                <img src="${user.avatar_url}" alt="user avatar">
+            </figure>
+            <div>
+                <p><strong>Name:</strong> ${user.name}</p>
+                <p><strong>Bio:</strong> ${user.bio}</p>
+                <p><strong>Location:</strong> ${user.location}</p>
+                <p><strong>Number of public repos:</strong> ${user.public_repos}</p>
+            </div>`;
+        loadRepos();
+    }
     overView.append(userProfile);
-    loadRepos();
 };
 
 // repos
 const loadRepos = async function () {
     filterInput.classList.remove("hide");
-    const userRepos = await fetch(`${githubUrl}/users/${username}/repos?sort=updated&per_page=3`);
+    const userRepos = await fetch(`${githubUrl}/users/${username}/repos?sort=updated&per_page=100`);
     const repos = await userRepos.json();
     displayRepos(repos);
 };
 
 const displayRepos = function (repos) {
-    repos.forEach(repo => {
+    if (repos.message === "Not Found") {
         const eachRepo = document.createElement("li");
-        eachRepo.innerHTML = `<h3 class="repo">${repo.name}</h3>`;
+        eachRepo.innerHTML = "<h3>Repos not Found!</h3>";
+        eachRepo.style.border = "0";
+        eachRepo.style.fontSize = "1.5em";
         repoList.append(eachRepo);
-    });
+    } else {
+        repos.forEach(repo => {
+            const eachRepo = document.createElement("li");
+            eachRepo.innerHTML = `<h3 class="repo">${repo.name}</h3>`;
+            repoList.append(eachRepo);
+        });
+    }
 };
 
 // clicking repos
@@ -95,7 +107,6 @@ filterInput.addEventListener("input", e => {
     repos.forEach(repo => {
         if (repo.innerText.toLowerCase().includes(inputValue)) {
             repo.classList.remove("hide");
-            console.log(repo);
         } else {
             repo.classList.add("hide");
         }

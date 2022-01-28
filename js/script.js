@@ -4,7 +4,8 @@ const username = "brian-hornbrook";
 const reposArea = document.querySelector(".repos");
 const repoList = document.querySelector(".repo-list");
 const repoData = document.querySelector(".repo-data");
-
+const backToRepoGallery = document.querySelector(".view-repos");
+const filterInput = document.querySelector(".filter-repos");
 
 
 // profile
@@ -34,7 +35,8 @@ const displayProfile = function (user) {
 
 // repos
 const loadRepos = async function () {
-    const userRepos = await fetch(`${githubUrl}/users/${username}/repos?sort=updated&per_page=100`);
+    filterInput.classList.remove("hide");
+    const userRepos = await fetch(`${githubUrl}/users/${username}/repos?sort=updated&per_page=3`);
     const repos = await userRepos.json();
     displayRepos(repos);
 };
@@ -65,7 +67,6 @@ const loadRepoData = async function (repoName) {
         languages.push(key);
     }
     loadRepoInfo(repoInfo, languages);
-    console.log(repoInfo);
 };
 
 const loadRepoInfo = function (repoInfo, languages) {
@@ -78,4 +79,25 @@ const loadRepoInfo = function (repoInfo, languages) {
     `
     repoData.classList.remove("hide");
     reposArea.classList.add("hide");
+    backToRepoGallery.classList.remove("hide");
 };
+
+// go back to repos
+backToRepoGallery.addEventListener("click", () => {
+    repoData.classList.add("hide");
+    reposArea.classList.remove("hide");
+});
+
+// filter search for a repo
+filterInput.addEventListener("input", e => {
+    const inputValue = e.target.value.toLowerCase();
+    const repos = document.querySelectorAll(".repo-list li");
+    repos.forEach(repo => {
+        if (repo.innerText.toLowerCase().includes(inputValue)) {
+            repo.classList.remove("hide");
+            console.log(repo);
+        } else {
+            repo.classList.add("hide");
+        }
+    });
+});

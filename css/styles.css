@@ -147,7 +147,7 @@ ul {
     border: 2px solid #483978;
 }
 
-section.repo-data {
+div .repo-data {
     background-color: #fff;
     padding: 2em;
     padding-bottom: 1em;
